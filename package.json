@@ -1,0 +1,23 @@
+{
+  "name": "discord-bot",
+  "version": "0.0.1",
+  "description": "Super Duper Bot of the Green Kingdom",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SirCucumber/Discord-Bot.git"
+  },
+  "author": "SirCucumber",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SirCucumber/Discord-Bot/issues"
+  },
+  "homepage": "https://github.com/SirCucumber/Discord-Bot#readme",
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0"
+  }
+}
