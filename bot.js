@@ -1,26 +1,44 @@
 // Инвайт-бота = https://discord.com/oauth2/authorize?client_id=660750027882496031&permissions=8&scope=bot
 // Инфа по созданию бота = https://www.digitalocean.com/community/tutorials/how-to-build-a-discord-bot-with-node-js-ru
 
+// console.log(`CONSOLE: ${message.author.presence.clientStatus}`);
+
 require("dotenv").config();
 const Discord = require("discord.js");
-// const config = require("./config.json");
+const fs = require("fs");
+const bot = new Discord.Client();
+const config = require("./config.json");
+bot.commands = new Discord.Collection();
 
-const client = new Discord.Client();
+fs.readdir("./commands", (err, files) => {
+    if (err) console.log(err);
 
-client.login(process.env.BOT_TOKEN);
+    let jsfile = files.filter((f) => f.split(".").pop() === "js");
+    if (jsfile.length <= 0) return console.log("Команды не найдены!");
 
-const prefix = "!";
+    console.log(`Loaded ${jsfile.length} commands`);
+    jsfile.forEach((f, i) => {
+        let props = require(`./commands/${f}`);
+        bot.commands.set(props.help.name, props);
+    });
+});
 
-client.on("message", function (message) {
-    if (message.author.bot) return;
-    if (!message.content.startsWith(prefix)) return;
+bot.on("message", async (message) => {
+    let prefix = config.prefix;
+    let messageArray = message.content.split(" ");
+    let command = messageArray[0];
+    let args = messageArray.slice(1);
 
-    const commandBody = message.content.slice(prefix.length);
-    const args = commandBody.split(" ");
-    const command = args.shift().toLocaleLowerCase();
+    let command_file = bot.commands.get(command.slice(prefix.length));
+    if (command_file) command_file.run(bot, message, args);
 
-    if (command === "ping") {
-        const timeTaken = Date.now() - message.createdTimestamp;
-        message.reply(`Pong! This message had a latency of ${timeTaken}ms.`);
+    if (message.content.startsWith(prefix + "Привет")) {
+        message.channel.send("Ну, привет, коли не шутишь!");
     }
+});
+
+bot.login(process.env.BOT_TOKEN);
+bot.on("ready", () => {
+    console.log(`${bot.user.username} online!`);
+    bot.user.setPresence({ status: "dnd", activity: { name: "test", type: 1, url: "https://www.twitch.tv/sir_cucumber" } });
 });
