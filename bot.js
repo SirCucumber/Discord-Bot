@@ -1,7 +1,7 @@
 // Инвайт-бота = https://discord.com/oauth2/authorize?client_id=660750027882496031&permissions=8&scope=bot
 // Инфа по созданию бота = https://www.digitalocean.com/community/tutorials/how-to-build-a-discord-bot-with-node-js-ru
 
-// console.log(`CONSOLE: ${message.author.presence.clientStatus}`);
+// console.log(message.author.presence.activities);
 
 require("dotenv").config();
 const Discord = require("discord.js");
@@ -13,7 +13,7 @@ bot.commands = new Discord.Collection();
 fs.readdir("./commands", (err, files) => {
     if (err) console.log(err);
 
-    let jsfile = files.filter((f) => f.split(".").pop() === "js");
+    let jsfile = files.filter(f => f.split(".").pop() === "js");
     if (jsfile.length <= 0) return console.log("Команды не найдены!");
 
     console.log(`Loaded ${jsfile.length} commands`);
@@ -23,7 +23,7 @@ fs.readdir("./commands", (err, files) => {
     });
 });
 
-bot.on("message", async (message) => {
+bot.on("message", async message => {
     let prefix = config.prefix;
     let messageArray = message.content.split(" ");
     let command = messageArray[0];
@@ -35,10 +35,20 @@ bot.on("message", async (message) => {
     if (message.content.startsWith(prefix + "Привет")) {
         message.channel.send("Ну, привет, коли не шутишь!");
     }
+    if (message.content.includes("Читос")) {
+        message.channel.send("Тссс! Не пали!");
+    }
 });
 
 bot.login(process.env.BOT_TOKEN);
 bot.on("ready", () => {
     console.log(`${bot.user.username} online!`);
-    bot.user.setPresence({ status: "dnd", activity: { name: "test", type: 1, url: "https://www.twitch.tv/sir_cucumber" } });
+    bot.user.setPresence({
+        status: "online",
+        activity: {
+            name: "ОГУРЕЦ ВЕРНУЛСЯ!",
+            type: 1,
+            url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        },
+    });
 });
