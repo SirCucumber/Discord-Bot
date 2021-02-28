@@ -32,12 +32,30 @@ bot.on("message", async message => {
     let command_file = bot.commands.get(command.slice(prefix.length));
     if (command_file) command_file.run(bot, message, args);
 
-    if (message.content.startsWith(prefix + "Привет")) {
+    /*     if (message.content.startsWith(prefix + "Привет")) {
         message.channel.send("Ну, привет, коли не шутишь!");
+    } */
+});
+
+bot.on("message", async message => {
+    fs.readFile("./files/notes/test.txt", "utf8", function (error, data) {
+        //console.log("Асинхронное чтение файла");
+        if (error) throw console.error;
+        if (data.includes(message.content.toLowerCase())) {
+            message.channel.send("Повався!");
+        }
+        //console.log(data);
+    });
+    /*     console.log("Синхронное чтение файла");
+    let fileContect = fs.readFileSync("./files/notes/test.txt", "utf8");
+    console.log(fileContect); */
+
+    /*     let fileContect = fs.readFileSync("./files/notes/test.txt", "utf8");
+fileContect.filter(word => {
+    if (message.content.toLowerCase().includes(word)) {
+        message.channel.send("Попався");
     }
-    if (message.content.includes("Читос")) {
-        message.channel.send("Тссс! Не пали!");
-    }
+}); */
 });
 
 bot.login(process.env.BOT_TOKEN);
