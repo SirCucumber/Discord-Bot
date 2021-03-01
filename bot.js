@@ -8,6 +8,9 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const bot = new Discord.Client();
 const config = require("./config.json");
+const banwordsJSON = require("./files/notes/banwords.json");
+const forbiddenWordsJSON = banwordsJSON.forbiddenWords;
+
 bot.commands = new Discord.Collection();
 
 fs.readdir("./commands", (err, files) => {
@@ -38,24 +41,14 @@ bot.on("message", async message => {
 });
 
 bot.on("message", async message => {
-    fs.readFile("./files/notes/test.txt", "utf8", function (error, data) {
-        //console.log("Асинхронное чтение файла");
-        if (error) throw console.error;
-        if (data.includes(message.content.toLowerCase())) {
-            message.channel.send("Повався!");
-        }
-        //console.log(data);
-    });
-    /*     console.log("Синхронное чтение файла");
-    let fileContect = fs.readFileSync("./files/notes/test.txt", "utf8");
-    console.log(fileContect); */
-
-    /*     let fileContect = fs.readFileSync("./files/notes/test.txt", "utf8");
-fileContect.filter(word => {
-    if (message.content.toLowerCase().includes(word)) {
+    if (
+        forbiddenWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
         message.channel.send("Попався");
     }
-}); */
+    // console.log(message.author.presence.activities);
 });
 
 bot.login(process.env.BOT_TOKEN);
