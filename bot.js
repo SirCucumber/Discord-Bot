@@ -52,7 +52,20 @@ bot.on("message", async message => {
     // console.log(message.author.presence.activities);
 });
 
-bot.on("guildMemberAdd", async member => {
+bot.login(process.env.BOT_TOKEN);
+bot.on("ready", () => {
+    console.log(`${bot.user.username} online!`);
+    bot.user.setPresence({
+        status: "online",
+        activity: {
+            name: "ОГУРЕЦ ВЕРНУЛСЯ!",
+            type: 1,
+            url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        },
+    });
+});
+
+/* bot.on("guildMemberAdd", async member => {
     let role = member.guild.roles.cache.find(r => r.name == "Новенький");
     let channel = member.guild.channels.cache.find(c => c.name == "привет-пока");
 
@@ -66,17 +79,4 @@ bot.on("guildMemberAdd", async member => {
         .setImage("https://i.imgur.com/Ow0yaBp.png");
     await channel.send(embed);
     //await member.addRole("816386721200472134");
-});
-
-bot.login(process.env.BOT_TOKEN);
-bot.on("ready", () => {
-    console.log(`${bot.user.username} online!`);
-    bot.user.setPresence({
-        status: "online",
-        activity: {
-            name: "ОГУРЕЦ ВЕРНУЛСЯ!",
-            type: 1,
-            url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        },
-    });
-});
+}); */
