@@ -4,7 +4,6 @@
 // console.log(message.author.presence.activities);
 
 require("dotenv").config();
-const { getFips } = require("crypto");
 const Discord = require("discord.js");
 const fs = require("fs");
 const bot = new Discord.Client();
@@ -27,6 +26,7 @@ fs.readdir("./commands", (err, files) => {
     });
 });
 
+// Триггер на команды
 bot.on("message", async message => {
     let prefix = config.prefix;
     let messageArray = message.content.split(" ");
@@ -41,6 +41,7 @@ bot.on("message", async message => {
     } */
 });
 
+// Запрещенные слова
 bot.on("message", async message => {
     if (
         forbiddenWordsJSON.some(word => {
@@ -49,34 +50,55 @@ bot.on("message", async message => {
     ) {
         message.channel.send("Попався");
     }
-    // console.log(message.author.presence.activities);
 });
 
 bot.login(process.env.BOT_TOKEN);
+
+// Статус бота
 bot.on("ready", () => {
     console.log(`${bot.user.username} online!`);
-    bot.user.setPresence({
-        status: "online",
-        activity: {
-            name: "ОГУРЕЦ ВЕРНУЛСЯ!",
-            type: 1,
-            url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        },
-    });
+
+    setInterval(() => {
+        const statusesNames = [`ОГУРЕЦ ВЕРНУЛСЯ!`, `ИЗВИНИСЬ!`, `КУ! КУКУМБА!`, `Продам гараж`];
+
+        const nameStatus = statusesNames[Math.floor(Math.random() * statusesNames.length)];
+        bot.user.setPresence({
+            status: "online",
+            activity: {
+                name: nameStatus,
+                type: 1,
+                url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            },
+        });
+    }, 24000);
 });
 
-/* bot.on("guildMemberAdd", async member => {
-    let role = member.guild.roles.cache.find(r => r.name == "Новенький");
-    let channel = member.guild.channels.cache.find(c => c.name == "привет-пока");
+// Человек заходит на сервер
+bot.on("guildMemberAdd", async member => {
+    let channel = member.guild.channels.cache.find(c => c.id == "816386424965955604");
 
     let embed = new Discord.MessageEmbed()
         .setTitle("В королевство\nприбыл новый житель!")
         .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
-        .setDescription(`${member}`)
-        .setColor("RANDOM")
-        .setFooter(`Корнишонов стало:`)
-        .setTimestamp()
-        .setImage("https://i.imgur.com/Ow0yaBp.png");
+        .setDescription(`Привет, ${member}.`)
+        .setColor("#0cff00")
+        .setImage("https://i.imgur.com/K0ItPyv.png")
+        .setFooter(`Корнишонов стало: ${member.guild.memberCount}`)
+        .setTimestamp();
     await channel.send(embed);
-    //await member.addRole("816386721200472134");
-}); */
+});
+
+// Человек ливает с сервера
+bot.on("guildMemberRemove", async member => {
+    let channel = member.guild.channels.cache.find(c => c.id == "816386424965955604");
+
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Королевство\nне досчиталось жителя!")
+        .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+        .setDescription(`Пока, ${member}.`)
+        .setColor("ff0000")
+        .setImage("https://i.imgur.com/UdWAHgy.png")
+        .setFooter(`Корнишонов осталось: ${member.guild.memberCount}`)
+        .setTimestamp();
+    await channel.send(embed);
+});
