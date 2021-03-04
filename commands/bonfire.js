@@ -4,7 +4,7 @@ module.exports.run = async (bot, message, args) => {
     const linksGifToBonfire = "https://i.imgur.com/S6UV72e.gif";
     // const filesGifToBonfire = "./files/images/Bonfire_Announce.gif";
     const linksInviteToBonfire = "https://discord.gg/8AtCHXH";
-    const announceChannelForBonfire = "815513290917806101";
+    const announceChannelForBonfire = "213736387818553344";
     const randomNumberBonfire = Math.floor(Math.random() * 3);
     let choosePhraseForBonfire = "";
 
@@ -19,7 +19,7 @@ module.exports.run = async (bot, message, args) => {
             choosePhraseForBonfire = "Еще одна тупая фраза";
             break;
     }
-    if (message.member.roles.cache.has("815553104216457237")) {
+    if (message.member.roles.cache.has("213743023874506753")) {
         await message.guild.channels.cache
             .get(announceChannelForBonfire)
             .send(`@everyone\n${choosePhraseForBonfire}\n${linksInviteToBonfire}\n${linksGifToBonfire}` /* , { files: [filesGifToBonfire] } */);

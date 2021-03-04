@@ -75,7 +75,7 @@ bot.on("ready", () => {
 
 // Человек заходит на сервер
 bot.on("guildMemberAdd", async member => {
-    let channel = member.guild.channels.cache.find(c => c.id == "816386424965955604");
+    let channel = member.guild.channels.cache.find(c => c.id == "543340636494102546");
 
     let embed = new Discord.MessageEmbed()
         .setTitle("В королевство\nприбыл новый житель!")
@@ -90,14 +90,14 @@ bot.on("guildMemberAdd", async member => {
 
 // Человек ливает с сервера
 bot.on("guildMemberRemove", async member => {
-    let channel = member.guild.channels.cache.find(c => c.id == "816386424965955604");
+    let channel = member.guild.channels.cache.find(c => c.id == "543340636494102546");
 
     let embed = new Discord.MessageEmbed()
         .setTitle("Королевство\nне досчиталось жителя!")
         .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
         .setDescription(`Пока, ${member}.`)
         .setColor("ff0000")
-        .setImage("https://i.imgur.com/UdWAHgy.png")
+        .setImage("https://i.imgur.com/X6iqBfb.png")
         .setFooter(`Корнишонов осталось: ${member.guild.memberCount}`)
         .setTimestamp();
     await channel.send(embed);
