@@ -10,6 +10,16 @@ const bot = new Discord.Client();
 const config = require("./config.json");
 const triggerwordsJSON = require("./files/notes/triggerwords.json");
 const forbiddenWordsJSON = triggerwordsJSON.forbiddenWords;
+const animeWordsJSON = triggerwordsJSON.animeWords;
+const symbolWordsJSON = triggerwordsJSON.symbolWords;
+const linksWordsJSON = triggerwordsJSON.linksWords;
+const helloWordsJSON = triggerwordsJSON.helloWords;
+const fWordsJSON = triggerwordsJSON.fWords;
+const cookiesWordsJSON = triggerwordsJSON.cookiesWords;
+const freeWordsJSON = triggerwordsJSON.freeWords;
+const wutsWordsJSON = triggerwordsJSON.wutsWords;
+const screamWordsJSON = triggerwordsJSON.screamWords;
+const bonfireWordsJSON = triggerwordsJSON.bonfireWords;
 
 bot.commands = new Discord.Collection();
 
@@ -41,14 +51,95 @@ bot.on("message", async message => {
     } */
 });
 
-// Запрещенные слова
+// Триггеры
 bot.on("message", async message => {
+    // Запрещенные слова
     if (
         forbiddenWordsJSON.some(word => {
             return message.content.toLowerCase().includes(word);
         })
     ) {
-        message.channel.send("Попався");
+        message.channel.send("У нас в королевстве так не выражаются!");
+    }
+    // Аниме
+    if (
+        animeWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("🚽");
+    }
+    // Символы
+    if (
+        symbolWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.channel.send("┬─┬ ノ( ゜-゜ノ)");
+    }
+    // Ссылки
+    if (
+        linksWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.reply(`༼ つ ◕_◕ ༽つ держи ||https://www.youtube.com/watch?v=dQw4w9WgXcQ||`);
+    }
+    // Приветствие
+    if (
+        helloWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("755772772298260550");
+    }
+    // Press F
+    if (
+        fWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("🇫");
+    }
+    // Печеньки
+    if (
+        cookiesWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.channel.send("https://youtu.be/xzRGxegXzYM");
+    }
+    // Халявушка
+    if (
+        freeWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("696709254274482207");
+    }
+    // Вуц
+    if (
+        wutsWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("695916372416528394");
+    }
+    // Кричалки
+    if (
+        screamWordsJSON.find(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("695916370776424479");
+    }
+    // Костер
+    if (
+        bonfireWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("696709254404636783");
     }
 });
 

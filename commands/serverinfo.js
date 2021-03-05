@@ -27,7 +27,7 @@ module.exports.run = async (bot, message, args) => {
         )
         .setColor("RANDOM")
         .setFooter(`© ${message.guild.name} ${dateCreateGuild.getFullYear()}-${new Date().getFullYear()}`);
-    if (message.member.roles.cache.has("449679001670123523" || "561952344422613012")) {
+    if (message.member.roles.cache.has("449679001670123523")) {
         await message.channel.send("Недостаточно прав!");
     } else {
         await message.channel.send(embed);
