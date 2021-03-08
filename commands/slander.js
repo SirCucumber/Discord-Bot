@@ -12,11 +12,18 @@ module.exports.run = async (bot, message, args) => {
         .addField("Согрешил", sinMember, true)
         .addField("Осудил", message.author, true)
         .addField("Грех", sin)
-        .addField("Замаливание", `${sinTime} минут`)
+        .addField("Замаливание", `${sinTime / 60000} минут`)
         .setFooter(`Вернется к нормальной жизни в `)
         .setColor("RANDOM");
     await message.channel.send(embed);
     sinMember.roles.add(sinRole);
+    setTimeout(
+        () =>
+            sinMember.roles.remove(sinRole) &&
+            message.channel.send(`${sinMember} замолил грехи`),
+        sinTime
+    );
+
     //console.log(sinTime);
 };
 
