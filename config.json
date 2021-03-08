@@ -1,3 +1,28 @@
 {
-    "prefix": "!"
+    "prefix": "!",
+
+    "BonfireLinksGif": "https://i.imgur.com/S6UV72e.gif",
+    "BonfireLinksInvite": "https://discord.gg/8AtCHXH",
+    "BonfireAnnounceChannel": "213736387818553344",
+
+    "CinemaLinksGif": "https://i.imgur.com/0EkbKCZ.gif",
+    "CinemaLinksInvite": "https://discord.gg/WMafhFZ",
+    "CinemaAnnounceChannel": "213736387818553344",
+
+    "UserJoinServerAnnounceChannel": "543340636494102546",
+    "UserJoinServerRole": "449679001670123523",
+    "UserJoinServerImage": "https://i.imgur.com/K0ItPyv.png",
+
+    "UserLeaveServerAnnounceChannel": "543340636494102546",
+    "UserLeaveServerImage": "https://i.imgur.com/X6iqBfb.png",
+
+    "LogsModsChannel": "817730557718560790",
+    "LogsFullChannel": "817749172869660732",
+
+    "TriggerNsfwChannel": "658785700531142664",
+    "TriggerMusicChannel": "718529319072301076",
+    "TriggerEatChannel": "713832315175829525",
+
+    "sinsRole": "818494138654916638",
+    "sinsImage": "https://cdn.discordapp.com/emojis/696709252965728338.png"
 }

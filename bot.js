@@ -20,6 +20,12 @@ const freeWordsJSON = triggerwordsJSON.freeWords;
 const wutsWordsJSON = triggerwordsJSON.wutsWords;
 const screamWordsJSON = triggerwordsJSON.screamWords;
 const bonfireWordsJSON = triggerwordsJSON.bonfireWords;
+const cucumberWordsJSON = triggerwordsJSON.cucumberWords;
+const musicWordsJSON = triggerwordsJSON.musicWords;
+const morningWordsJSON = triggerwordsJSON.morningWords;
+const nightWordsJSON = triggerwordsJSON.nightWords;
+const judgeWordsJSON = triggerwordsJSON.judgeWords;
+const poopWordsJSON = triggerwordsJSON.poopWords;
 
 bot.commands = new Discord.Collection();
 
@@ -36,7 +42,7 @@ fs.readdir("./commands", (err, files) => {
     });
 });
 
-// Триггер на команды
+// Триггеры на команды
 bot.on("message", async message => {
     let prefix = config.prefix;
     let messageArray = message.content.split(" ");
@@ -51,7 +57,7 @@ bot.on("message", async message => {
     } */
 });
 
-// Триггеры
+// Триггеры на слова
 bot.on("message", async message => {
     // Запрещенные слова
     if (
@@ -83,7 +89,9 @@ bot.on("message", async message => {
             return message.content.toLowerCase().includes(word);
         })
     ) {
-        message.reply(`༼ つ ◕_◕ ༽つ держи ||https://www.youtube.com/watch?v=dQw4w9WgXcQ||`);
+        message.reply(
+            `༼ つ ◕_◕ ༽つ держи ||https://www.youtube.com/watch?v=dQw4w9WgXcQ||`
+        );
     }
     // Приветствие
     if (
@@ -141,6 +149,71 @@ bot.on("message", async message => {
     ) {
         message.react("696709254404636783");
     }
+    // Кукубер
+    if (
+        cucumberWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("696709252277862513");
+    }
+    // Утро
+    if (
+        morningWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("700321938618318948");
+    }
+    // Ночь
+    if (
+        nightWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("695037044421820436");
+    }
+    // Осуждалка
+    if (
+        judgeWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.react("695037044141064202");
+    }
+    // Печеньки
+    if (
+        poopWordsJSON.some(word => {
+            return message.content.toLowerCase().includes(word);
+        })
+    ) {
+        message.channel.send("https://i.imgur.com/gqW3cDm.gifv");
+    }
+    // NSFW
+    if (
+        (message.attachments.size > 0 || message.embeds.length > 0) &&
+        message.channel == config.TriggerNsfwChannel
+    ) {
+        message.react("695916373104263258");
+        message.react("696709252907270194");
+    }
+    // Музыка
+    if (
+        musicWordsJSON.find(word => {
+            return message.content.toLowerCase().includes(word);
+        }) &&
+        message.channel == config.TriggerMusicChannel
+    ) {
+        message.react("695037044568752204");
+    }
+    // Харчевня
+    if (
+        (message.attachments.size > 0 || message.embeds.length > 0) &&
+        message.channel == config.TriggerEatChannel
+    ) {
+        message.react("695544244068155402");
+    }
+    //console.log(message.embeds.length);
 });
 
 bot.login(process.env.BOT_TOKEN);
@@ -150,9 +223,15 @@ bot.on("ready", () => {
     console.log(`${bot.user.username} online!`);
 
     setInterval(() => {
-        const statusesNames = [`ОГУРЕЦ ВЕРНУЛСЯ!`, `ИЗВИНИСЬ!`, `КУ! КУКУМБА!`, `Продам гараж`];
+        const statusesNames = [
+            `ОГУРЕЦ ВЕРНУЛСЯ!`,
+            `ИЗВИНИСЬ!`,
+            `КУ! КУКУМБА!`,
+            `Продам гараж`,
+        ];
 
-        const nameStatus = statusesNames[Math.floor(Math.random() * statusesNames.length)];
+        const nameStatus =
+            statusesNames[Math.floor(Math.random() * statusesNames.length)];
         bot.user.setPresence({
             status: "online",
             activity: {
@@ -164,32 +243,260 @@ bot.on("ready", () => {
     }, 24000);
 });
 
+// Логи Модерские = Редактирование сообщения
+bot.on("messageUpdate", async (oldMessage, newMessage) => {
+    if (oldMessage.author.bot) return;
+    if (oldMessage.content === newMessage.content) return;
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Сообщение изменено")
+        .addField("Отправитель", oldMessage.member, true)
+        .addField("Канал", oldMessage.channel, true)
+        .addField("Раньше", oldMessage.content)
+        .addField("Сейчас", newMessage.content)
+        .setColor("#FFFF00")
+        .setTimestamp();
+    await oldMessage.guild.channels.cache
+        .get(config.LogsModsChannel)
+        .send(embed);
+});
+
+// Логи Модерские = Удаление сообщения
+bot.on("messageDelete", async message => {
+    if (message.author.bot) return;
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Сообщение удалено")
+        .addField("Отправитель", message.member, true)
+        .addField("Канал", message.channel, true)
+        .addField("Содержание", message.content)
+        .setColor("#FF0000")
+        .setTimestamp();
+    await message.guild.channels.cache.get(config.LogsModsChannel).send(embed);
+});
+
+// Фулл Логи = Создание канала
+bot.on("channelCreate", async channel => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Создан канал")
+        .addField("Название канала", channel.name)
+        .setColor("#00FF00")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+});
+
+// Фулл Логи = Удаление канала
+bot.on("channelDelete", async channel => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Удален канал")
+        .addField("Название канала", channel.name)
+        .setColor("#FF0000")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+});
+
+// Фулл Логи = Создание роли
+bot.on("roleCreate", async role => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Создана роль")
+        .addField("Роль", role.name)
+        .setColor("#00FF00")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+});
+
+// Фулл Логи = Удаление роли
+bot.on("roleDelete", async role => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Удалена роль")
+        .addField("Роль", role.name)
+        .setColor("#FF0000")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+});
+
+// Фулл Логи = Обновление роли
+bot.on("roleUpdate", async (oldRole, newRole) => {
+    /*     if (oldRole.permissions !== newRole.permissions) {
+        const embed = new Discord.MessageEmbed()
+            .setAuthor(`Role changed permissions`)
+            .setColor("#ffc500")
+            .setFooter(`ID: ${newRole.id} 🔥`)
+            .setTimestamp();
+
+        const oldPerms = oldRole.permissions;
+        const newPerms = newRole.permissions;
+
+        const permUpdated = [];
+
+        for (const [key, element] of Object.entries(oldPerms)) {
+            if (newPerms[key] !== element) permUpdated.push(key);
+        }
+
+        if (oldRole.permissions > newRole.permissions) {
+            //Permission lost
+
+            embed.setDescription(
+                `**${newRole.toString()} has lost the ${permUpdated.join(
+                    ", "
+                )} permission**`
+            );
+            await bot.channels.cache
+                .find(ch => ch.id === config.LogsFullChannel)
+                .send(embed);
+        } else if (oldRole.permissions < newRole.permissions) {
+            //Permission given
+
+            embed.setDescription(
+                `**${newRole.toString()} has been given the ${permUpdated.join(
+                    ", "
+                )} permission**`
+            );
+            await bot.channels.cache
+                .find(ch => ch.id === config.LogsFullChannel)
+                .send(embed);
+        }
+    } */
+    if (oldRole.name !== newRole.name) {
+        const embed = new Discord.MessageEmbed()
+            .setTitle(`Изменено имя роли`)
+            .addField(`Старое имя`, oldRole.name)
+            .addField(`Новое имя`, newRole.name)
+            .setColor("#FFFF00")
+            .setTimestamp();
+        await bot.channels.cache
+            .find(ch => ch.id === config.LogsFullChannel)
+            .send(embed);
+    }
+});
+
+// Фулл Логи = Выдана роль
+/* bot.on("guildMemberUpdate", async (oldMember, newMember) => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Выдана роль")
+        .addField("Старые роли", oldMember)
+        .addField("Новые роли", newMember)
+        .setColor("RANDOM")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+}); */
+
+/* Роль отобрана
+Пользователь подключился к голосовому каналу
+Пользователь отключился от голосового канала
+Пользователя переместили в другой голосовой канала
+Изменен ник */
+
+// Фулл Логи = Добавлен эмодзи
+bot.on("emojiCreate", async emoji => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Добавлен emoji")
+        .addField("Эмоджи", emoji)
+        .setColor("#00FF00")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+});
+
+// Фулл Логи = Изменен эмодзи
+bot.on("emojiUpdate", async emoji => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Изменен emoji")
+        .addField("Эмоджи", emoji)
+        .setColor("#FFFF00")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+});
+
+// Фулл Логи = Удален эмодзи
+bot.on("emojiDelete", async emoji => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Удален emoji")
+        .addField("Эмоджи", emoji)
+        .setColor("#FF0000")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+});
+
+/* // Фулл Логи = Бан
+bot.on("guildBanAdd", async (guild, user) => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Забанен участник")
+        .addField("Кем забанен")
+        .addField("Забанен", user)
+        .addField("Причина")
+        .setColor("#FF0000")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+});
+
+// Фулл Логи = Разбан
+bot.on("guildBanRemove", async (guild, user) => {
+    let embed = new Discord.MessageEmbed()
+        .setTitle("Разбанен участник")
+        .addField("Кем разбанен")
+        .addField("Разбанен", user)
+        .setColor("#00FF00")
+        .setTimestamp();
+    await bot.channels.cache
+        .find(ch => ch.id === config.LogsFullChannel)
+        .send(embed);
+}); */
+
 // Человек заходит на сервер
 bot.on("guildMemberAdd", async member => {
-    let channel = member.guild.channels.cache.find(c => c.id == "543340636494102546");
+    let channel = member.guild.channels.cache.find(
+        c => c.id == config.UserJoinServerAnnounceChannel
+    );
 
     let embed = new Discord.MessageEmbed()
         .setTitle("В королевство\nприбыл новый житель!")
-        .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+        .setThumbnail(
+            member.user.displayAvatarURL({ dynamic: true, size: 512 })
+        )
         .setDescription(`Привет, ${member}.`)
-        .setColor("#0cff00")
-        .setImage("https://i.imgur.com/K0ItPyv.png")
+        .setColor("RANDOM")
+        .setImage(config.UserJoinServerImage)
         .setFooter(`Корнишонов стало: ${member.guild.memberCount}`)
         .setTimestamp();
-    await channel.send(embed);
+    await channel.send({ embed: embed }).then(embedMessage => {
+        embedMessage.react("755772772298260550");
+    });
+    await member.roles.add(config.UserJoinServerRole);
 });
 
 // Человек ливает с сервера
 bot.on("guildMemberRemove", async member => {
-    let channel = member.guild.channels.cache.find(c => c.id == "543340636494102546");
+    let channel = member.guild.channels.cache.find(
+        c => c.id == config.UserLeaveServerAnnounceChannel
+    );
 
     let embed = new Discord.MessageEmbed()
         .setTitle("Королевство\nне досчиталось жителя!")
-        .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+        .setThumbnail(
+            member.user.displayAvatarURL({ dynamic: true, size: 512 })
+        )
         .setDescription(`Пока, ${member}.`)
-        .setColor("ff0000")
-        .setImage("https://i.imgur.com/X6iqBfb.png")
+        .setColor("RANDOM")
+        .setImage(config.UserLeaveServerImage)
         .setFooter(`Корнишонов осталось: ${member.guild.memberCount}`)
         .setTimestamp();
-    await channel.send(embed);
+    await channel.send({ embed: embed }).then(embedMessage => {
+        embedMessage.react("755775832261394514");
+    });
 });
