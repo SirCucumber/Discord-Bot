@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const config = require("../config.json");
 
 module.exports.run = async (bot, message, args) => {
-    const sinTime = message.content.split(" ").splice(2, 1) * 60000;
+    const sinTime = message.content.split(" ").splice(2, 1);
     const sin = message.content.split(" ").splice(3).join(" ");
     const sinRole = message.guild.roles.cache.get(config.sinsRole);
     const sinMember = message.mentions.members.first();
@@ -12,7 +12,7 @@ module.exports.run = async (bot, message, args) => {
         .addField("Согрешил", sinMember, true)
         .addField("Осудил", message.author, true)
         .addField("Грех", sin)
-        .addField("Замаливание", `${sinTime / 60000} минут`)
+        .addField("Замаливание", `${sinTime} минут`)
         .setFooter(`Вернется к нормальной жизни в `)
         .setColor("RANDOM");
     await message.channel.send(embed);
@@ -21,7 +21,7 @@ module.exports.run = async (bot, message, args) => {
         () =>
             sinMember.roles.remove(sinRole) &&
             message.channel.send(`${sinMember} замолил грехи`),
-        sinTime
+        sinTime * 60000
     );
 
     //console.log(sinTime);

@@ -59,10 +59,13 @@ bot.on("message", async message => {
 
 // Триггеры на слова
 bot.on("message", async message => {
+    const messageContentMassive = message.content
+        .toLowerCase()
+        .split(new RegExp("[!\"[\\]{}%^&*:@~#';/.<>\\|`]+|\\s+"));
     // Запрещенные слова
     if (
         forbiddenWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.channel.send("У нас в королевстве так не выражаются!");
@@ -70,7 +73,7 @@ bot.on("message", async message => {
     // Аниме
     if (
         animeWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("🚽");
@@ -86,7 +89,7 @@ bot.on("message", async message => {
     // Ссылки
     if (
         linksWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.reply(
@@ -96,7 +99,7 @@ bot.on("message", async message => {
     // Приветствие
     if (
         helloWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("755772772298260550");
@@ -104,7 +107,7 @@ bot.on("message", async message => {
     // Press F
     if (
         fWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("🇫");
@@ -112,7 +115,7 @@ bot.on("message", async message => {
     // Печеньки
     if (
         cookiesWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.channel.send("https://youtu.be/xzRGxegXzYM");
@@ -120,7 +123,7 @@ bot.on("message", async message => {
     // Халявушка
     if (
         freeWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("696709254274482207");
@@ -128,7 +131,7 @@ bot.on("message", async message => {
     // Вуц
     if (
         wutsWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("695916372416528394");
@@ -144,7 +147,7 @@ bot.on("message", async message => {
     // Костер
     if (
         bonfireWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("696709254404636783");
@@ -152,7 +155,7 @@ bot.on("message", async message => {
     // Кукубер
     if (
         cucumberWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("696709252277862513");
@@ -160,7 +163,7 @@ bot.on("message", async message => {
     // Утро
     if (
         morningWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("700321938618318948");
@@ -168,7 +171,7 @@ bot.on("message", async message => {
     // Ночь
     if (
         nightWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("695037044421820436");
@@ -176,7 +179,7 @@ bot.on("message", async message => {
     // Осуждалка
     if (
         judgeWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.react("695037044141064202");
@@ -184,7 +187,7 @@ bot.on("message", async message => {
     // Печеньки
     if (
         poopWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
+            return messageContentMassive.includes(word);
         })
     ) {
         message.channel.send("https://i.imgur.com/gqW3cDm.gifv");
@@ -213,7 +216,6 @@ bot.on("message", async message => {
     ) {
         message.react("695544244068155402");
     }
-    //console.log(message.embeds.length);
 });
 
 bot.login(process.env.BOT_TOKEN);
@@ -376,24 +378,60 @@ bot.on("roleUpdate", async (oldRole, newRole) => {
     }
 });
 
-// Фулл Логи = Выдана роль
-/* bot.on("guildMemberUpdate", async (oldMember, newMember) => {
-    let embed = new Discord.MessageEmbed()
-        .setTitle("Выдана роль")
-        .addField("Старые роли", oldMember)
-        .addField("Новые роли", newMember)
-        .setColor("RANDOM")
-        .setTimestamp();
-    await bot.channels.cache
-        .find(ch => ch.id === config.LogsFullChannel)
-        .send(embed);
-}); */
+// Фулл Логи = Выдана/Отобрана роль // Изменен никнейм
+bot.on("guildMemberUpdate", async (oldMember, newMember) => {
+    /*     const newRole = newMember.roles.cache.filter(
+        x => !oldMember.roles.cache.has(x)
+    ); */
+    if (newMember.roles.cache.size > oldMember.roles.cache.size) {
+        let newRole;
+        newMember.roles.cache.forEach((value, key) => {
+            if (!oldMember.roles.cache.has(key)) newRole = value.name;
+        });
+        let embed = new Discord.MessageEmbed()
+            .setTitle("Выдана роль")
+            .addField("Новая роль", newRole)
+            .setColor("#FF0000")
+            .setTimestamp();
+        await bot.channels.cache
+            .find(ch => ch.id === config.LogsFullChannel)
+            .send(embed);
+    } else if (newMember.roles.cache.size < oldMember.roles.cache.size) {
+        let oldRole;
+        oldMember.roles.cache.forEach((value, key) => {
+            if (!newMember.roles.cache.has(key)) oldRole = value.name;
+        });
+        let embed = new Discord.MessageEmbed()
+            .setTitle("Отобрана роль")
+            .addField("Изъятая роль", oldRole)
+            .setColor("#FF0000")
+            .setTimestamp();
+        await bot.channels.cache
+            .find(ch => ch.id === config.LogsFullChannel)
+            .send(embed);
+    } else if (oldMember.nickname != newMember.nickname) {
+        let embed = new Discord.MessageEmbed()
+            .setTitle("Изменен никнейм")
+            .addField(
+                "Старый ник",
+                oldMember.nickname || oldMember.user.username
+            )
+            .addField(
+                "Новый ник",
+                newMember.nickname || newMember.user.username
+            )
+            .setColor("#FF0000")
+            .setTimestamp();
+        await bot.channels.cache
+            .find(ch => ch.id === config.LogsFullChannel)
+            .send(embed);
+    }
+});
 
-/* Роль отобрана
+/*
 Пользователь подключился к голосовому каналу
 Пользователь отключился от голосового канала
-Пользователя переместили в другой голосовой канала
-Изменен ник */
+Пользователя переместили в другой голосовой канала*/
 
 // Фулл Логи = Добавлен эмодзи
 bot.on("emojiCreate", async emoji => {

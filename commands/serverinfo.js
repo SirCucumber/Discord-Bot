@@ -13,21 +13,16 @@ module.exports.run = async (bot, message, args) => {
     const allMembers = message.guild.members.cache.size;
     const emojicount = message.guild.emojis.cache;
     const dateCreateGuild = new Date(message.guild.createdTimestamp);
-    const minutesAddZero =
-        (dateCreateGuild.getMinutes() < 10 ? "0" : "") +
-        dateCreateGuild.getMinutes(); // создана для добавления нуля к минутам поля "Сервер создан"
     const embed = new Discord.MessageEmbed()
         .setAuthor(message.guild.name, message.guild.iconURL({ dynamic: true }))
         .addField("Владелец:", message.guild.owner, true)
         .addField(
             "Сервер создан:",
-            `${new Date(message.guild.createdTimestamp).getDate()}.${new Date(
-                message.guild.createdTimestamp
-            ).getMonth()}.${new Date(
-                message.guild.createdTimestamp
-            ).getFullYear()} в ${new Date(
-                message.guild.createdTimestamp
-            ).getHours()}:${minutesAddZero}`,
+            `${fill(dateCreateGuild.getUTCDate())}.${fill(
+                dateCreateGuild.getUTCMonth()
+            )}.${fill(dateCreateGuild.getUTCFullYear())} в ${fill(
+                dateCreateGuild.getUTCHours()
+            )}:${fill(dateCreateGuild.getUTCMinutes())}`,
             true
         )
         .addField("Роли:", `Всего: ${message.guild.roles.cache.size}`, true)
@@ -58,6 +53,10 @@ module.exports.run = async (bot, message, args) => {
     }
     //console.log(message.author.presence.activities); // КОНСОЛЬ!
 };
+
+function fill(n) {
+    return ("00" + n).slice(-2);
+}
 
 module.exports.help = {
     name: "serverinfo",
