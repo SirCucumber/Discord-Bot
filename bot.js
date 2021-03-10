@@ -374,9 +374,6 @@ bot.on("roleUpdate", async (oldRole, newRole) => {
 
 // Фулл Логи = Выдана/Отобрана роль // Изменен никнейм
 bot.on("guildMemberUpdate", async (oldMember, newMember) => {
-    /*     const newRole = newMember.roles.cache.filter(
-        x => !oldMember.roles.cache.has(x)
-    ); */
     if (newMember.roles.cache.size > oldMember.roles.cache.size) {
         let newRole;
         newMember.roles.cache.forEach((value, key) => {
@@ -422,10 +419,21 @@ bot.on("guildMemberUpdate", async (oldMember, newMember) => {
     }
 });
 
-/*
-Пользователь подключился к голосовому каналу
-Пользователь отключился от голосового канала
-Пользователя переместили в другой голосовой канала*/
+bot.on("voiceStateUpdate", async (oldState, newState) => {
+    if (oldState.channel != newState.channel) {
+        if (newState.channel) {
+            let embed = new Discord.MessageEmbed()
+                .setTitle("Тело подключилось")
+                .addField("Ник", newState.member.user.username)
+                .addField("Название канала", newState.channel.name)
+                .setColor("#FF0000")
+                .setTimestamp();
+            await bot.channels.cache
+                .find(ch => ch.id === config.LogsFullChannel)
+                .send(embed);
+        }
+    }
+});
 
 // Фулл Логи = Добавлен эмодзи
 bot.on("emojiCreate", async emoji => {
@@ -463,13 +471,11 @@ bot.on("emojiDelete", async emoji => {
         .send(embed);
 });
 
-/* // Фулл Логи = Бан
+// Фулл Логи = Бан
 bot.on("guildBanAdd", async (guild, user) => {
     let embed = new Discord.MessageEmbed()
         .setTitle("Забанен участник")
-        .addField("Кем забанен")
-        .addField("Забанен", user)
-        .addField("Причина")
+        .addField("Забанен", user.username)
         .setColor("#FF0000")
         .setTimestamp();
     await bot.channels.cache
@@ -481,14 +487,13 @@ bot.on("guildBanAdd", async (guild, user) => {
 bot.on("guildBanRemove", async (guild, user) => {
     let embed = new Discord.MessageEmbed()
         .setTitle("Разбанен участник")
-        .addField("Кем разбанен")
-        .addField("Разбанен", user)
+        .addField("Разбанен", user.username)
         .setColor("#00FF00")
         .setTimestamp();
     await bot.channels.cache
         .find(ch => ch.id === config.LogsFullChannel)
         .send(embed);
-}); */
+});
 
 // Человек заходит на сервер
 bot.on("guildMemberAdd", async member => {
