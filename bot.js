@@ -61,7 +61,7 @@ bot.on("message", async message => {
 bot.on("message", async message => {
     const messageContentMassive = message.content
         .toLowerCase()
-        .split(new RegExp("[!\"[\\]{}%^&*:@~#';/.<>\\|`]+|\\s+"));
+        .split(new RegExp("[!\"[\\]{}%^&*$:@~#';/,.<>\\|`]+|\\s+"));
     // Запрещенные слова
     if (
         forbiddenWordsJSON.some(word => {
@@ -225,13 +225,7 @@ bot.on("ready", () => {
     console.log(`${bot.user.username} online!`);
 
     setInterval(() => {
-        const statusesNames = [
-            `ОГУРЕЦ ВЕРНУЛСЯ!`,
-            `ИЗВИНИСЬ!`,
-            `КУ! КУКУМБА!`,
-            `Продам гараж`,
-        ];
-
+        const statusesNames = config.botStatuses;
         const nameStatus =
             statusesNames[Math.floor(Math.random() * statusesNames.length)];
         bot.user.setPresence({
@@ -242,7 +236,7 @@ bot.on("ready", () => {
                 url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
             },
         });
-    }, 24000);
+    }, 60000);
 });
 
 // Логи Модерские = Редактирование сообщения
