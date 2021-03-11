@@ -8,6 +8,84 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const bot = new Discord.Client();
 const config = require("./config.json");
+
+const { ApiClient } = require("twitch");
+const {
+    AccessToken,
+    RefreshableAuthProvider,
+    StaticAuthProvider,
+} = require("twitch-auth");
+
+const clientId = process.env.clientId;
+const accessToken = process.env.accessToken;
+const clientSecret = process.env.clientSecret;
+const refreshToken = process.env.refreshToken;
+const authProvider = new RefreshableAuthProvider(
+    new StaticAuthProvider(clientId, accessToken),
+    {
+        clientSecret,
+        refreshToken,
+        onRefresh: token => {},
+    }
+);
+const apiClient = new ApiClient({ authProvider });
+
+apiClient.helix.users.getUserByName("sir_cucumber").then(user => {
+    // console.log(user.displayName);
+});
+
+/* bot.on("presenceUpdate", async (oldPresence, newPresence) => {
+    const presenceNewStreams = newPresence.activities.filter(
+        x => x.type === "STREAMING"
+    );
+    const presenceOldStreams = oldPresence.activities.filter(
+        x => x.type === "STREAMING"
+    );
+    if (newPresence.member.roles.cache.has("531871243163533323")) {
+        if (
+            presenceOldStreams[0].length == 0 &&
+            presenceNewStreams[0].type == "STREAMING"
+        ) {
+            let embed = new Discord.MessageEmbed()
+                .setTitle("Обнаружен стример!")
+                .addField("Стример", presenceNewStreams.user.username)
+                .addField("Категория", presenceNewStreams[0].state)
+                .addField("Название", presenceNewStreams[0].details)
+                .setColor("#6441a5")
+                .setTimestamp();
+            await bot.channels.cache
+                .find(ch => ch.id === config.LogsFullChannel)
+                .send(embed)
+                .then(links => {
+                    bot.channels.cache
+                        .find(ch => ch.id === config.LogsFullChannel)
+                        .send(presenceNewStreams[0].url);
+                });
+        }
+    } else if (newPresence.member.roles.cache.has("531871243163533323")) {
+        console.log(newPresence);
+        if (
+            presenceNewStreams[0].length == 0 &&
+            presenceOldStreams[0].type == "STREAMING"
+        ) {
+            let embed = new Discord.MessageEmbed()
+                .setTitle("Стрим окончен!")
+                .addField("Стример", newPresence.user.username)
+                .addField("Вод")
+                .setColor("#6441a5")
+                .setTimestamp();
+            await bot.channels.cache
+                .find(ch => ch.id === config.LogsFullChannel)
+                .send(embed)
+                .then(links => {
+                    bot.channels.cache
+                        .find(ch => ch.id === config.LogsFullChannel)
+                        .send(presenceOldStreams[0].url);
+                });
+        }
+    }
+}); */
+
 const triggerwordsJSON = require("./files/notes/triggerwords.json");
 const forbiddenWordsJSON = triggerwordsJSON.forbiddenWords;
 const animeWordsJSON = triggerwordsJSON.animeWords;
