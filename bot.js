@@ -61,7 +61,7 @@ bot.on("message", async message => {
 bot.on("message", async message => {
     const messageContentMassive = message.content
         .toLowerCase()
-        .split(new RegExp("[!\"[\\]{}%^&*$:@~#';/,.<>\\|`]+|\\s+"));
+        .split(new RegExp("[!\"[\\]{}%^&*$:@~#'?;/,.<>\\|`]+|\\s+"));
     // Запрещенные слова
     if (
         forbiddenWordsJSON.some(word => {
