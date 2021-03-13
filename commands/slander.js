@@ -6,25 +6,29 @@ module.exports.run = async (bot, message, args) => {
     const sin = message.content.split(" ").splice(3).join(" ");
     const sinRole = message.guild.roles.cache.get(config.sinsRole);
     const sinMember = message.mentions.members.first();
-    const embed = new Discord.MessageEmbed()
+    let emptyField = "\u200B";
+    let emptyField2 = "\u200B";
+    let embedSin = new Discord.MessageEmbed()
         .setTitle("Обнаружен грешник!", true)
-        .setThumbnail(config.sinsImage)
+        .setImage(`${config.sinsImageNotGood}?size=512`)
         .addField("Согрешил", sinMember, true)
         .addField("Осудил", message.author, true)
+        .addField(emptyField, emptyField2, true)
         .addField("Грех", sin)
-        .addField("Замаливание", `${sinTime} минут`)
+        .addField("Замаливание", `${sinTime} минут`, true)
+        .addField(emptyField, emptyField2, true)
         .setFooter(`Вернется к нормальной жизни в `)
         .setColor("RANDOM");
-    await message.channel.send(embed);
     sinMember.roles.add(sinRole);
-    setTimeout(
-        () =>
-            sinMember.roles.remove(sinRole) &&
-            message.channel.send(`${sinMember} замолил грехи`),
-        sinTime * 60000
-    );
-
-    //console.log(sinTime);
+    await message.channel.send(embedSin).then(et => {
+        setTimeout(() => {
+            let embedSin = new Discord.MessageEmbed()
+                .setTitle(`${sinMember.user.username} замолил грехи`)
+                .setImage(`${config.sinsImageGood}?size=512`);
+            et.edit(embedSin);
+            sinMember.roles.remove(sinRole);
+        }, sinTime * 10000);
+    });
 };
 
 module.exports.help = {

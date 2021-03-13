@@ -16,15 +16,18 @@
     "UserLeaveServerAnnounceChannel": "543340636494102546",
     "UserLeaveServerImage": "https://i.imgur.com/X6iqBfb.png",
 
-    "LogsModsChannel": "817730557718560790",
+    "LogsModsChannel": "817749172869660732",
     "LogsFullChannel": "817749172869660732",
+
+    "streamersChannel": "820354973933895680",
 
     "TriggerNsfwChannel": "658785700531142664",
     "TriggerMusicChannel": "718529319072301076",
     "TriggerEatChannel": "713832315175829525",
 
     "sinsRole": "818494138654916638",
-    "sinsImage": "https://cdn.discordapp.com/emojis/696709252965728338.png",
+    "sinsImageGood": "https://i.imgur.com/0T4ha6w.png",
+    "sinsImageNotGood": "https://i.imgur.com/hfrakVF.png",
 
     "botStatuses": [
         "ОГУРЕЦ ВЕРНУЛСЯ!",

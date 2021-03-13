@@ -9,7 +9,7 @@ const fs = require("fs");
 const bot = new Discord.Client();
 const config = require("./config.json");
 
-const { ApiClient } = require("twitch");
+const { ApiClient, TeamWithUsers } = require("twitch");
 const {
     AccessToken,
     RefreshableAuthProvider,
@@ -28,63 +28,98 @@ const authProvider = new RefreshableAuthProvider(
         onRefresh: token => {},
     }
 );
-const apiClient = new ApiClient({ authProvider });
 
-apiClient.helix.users.getUserByName("sir_cucumber").then(user => {
-    // console.log(user.displayName);
-});
+let streamerViews = 0;
+let streamerFollowers;
+let streamerNickname;
+let streamerId;
+let streamingActivity;
 
-/* bot.on("presenceUpdate", async (oldPresence, newPresence) => {
-    const presenceNewStreams = newPresence.activities.filter(
-        x => x.type === "STREAMING"
-    );
-    const presenceOldStreams = oldPresence.activities.filter(
-        x => x.type === "STREAMING"
-    );
+bot.on("presenceUpdate", async (oldPresence, newPresence) => {
+    const apiClient = new ApiClient({ authProvider });
+
+    if (oldPresence === undefined || newPresence === undefined) {
+        return;
+    }
     if (newPresence.member.roles.cache.has("531871243163533323")) {
-        if (
-            presenceOldStreams[0].length == 0 &&
-            presenceNewStreams[0].type == "STREAMING"
-        ) {
-            let embed = new Discord.MessageEmbed()
-                .setTitle("Обнаружен стример!")
-                .addField("Стример", presenceNewStreams.user.username)
-                .addField("Категория", presenceNewStreams[0].state)
-                .addField("Название", presenceNewStreams[0].details)
-                .setColor("#6441a5")
-                .setTimestamp();
-            await bot.channels.cache
-                .find(ch => ch.id === config.LogsFullChannel)
-                .send(embed)
-                .then(links => {
-                    bot.channels.cache
-                        .find(ch => ch.id === config.LogsFullChannel)
-                        .send(presenceNewStreams[0].url);
-                });
+        streamingActivity = newPresence.activities.find(
+            a => a.type === "STREAMING"
+        );
+        if (streamingActivity == undefined) {
+            return;
         }
-    } else if (newPresence.member.roles.cache.has("531871243163533323")) {
-        console.log(newPresence);
         if (
-            presenceNewStreams[0].length == 0 &&
-            presenceOldStreams[0].type == "STREAMING"
+            !oldPresence.activities.find(a => a.type === "STREAMING") &&
+            streamingActivity
         ) {
-            let embed = new Discord.MessageEmbed()
-                .setTitle("Стрим окончен!")
-                .addField("Стример", newPresence.user.username)
-                .addField("Вод")
-                .setColor("#6441a5")
-                .setTimestamp();
-            await bot.channels.cache
-                .find(ch => ch.id === config.LogsFullChannel)
-                .send(embed)
-                .then(links => {
-                    bot.channels.cache
-                        .find(ch => ch.id === config.LogsFullChannel)
-                        .send(presenceOldStreams[0].url);
+            streamerNickname = streamingActivity.url.split("/").splice(3, 2);
+
+            apiClient.helix.users
+                .getUserByName(streamerNickname[0])
+                .then(channel => {
+                    streamerViews = channel.views;
+                    apiClient.helix.users
+                        .getUserByName(streamerNickname[0])
+                        .then(user => {
+                            streamerId = user.id;
+                            apiClient.helix.users
+                                .getFollows({ followedUser: `${streamerId}` })
+                                .then(f => {
+                                    streamerFollowers = f.total;
+
+                                    let embed = new Discord.MessageEmbed()
+                                        .setTitle("Обнаружен стример!")
+                                        .setThumbnail(
+                                            newPresence.member.user.displayAvatarURL(
+                                                {
+                                                    dynamic: true,
+                                                    size: 512,
+                                                }
+                                            )
+                                        )
+                                        .addField(
+                                            "Стример",
+                                            newPresence.user.username,
+                                            true
+                                        )
+                                        .addField(
+                                            "Категория",
+                                            streamingActivity.state,
+                                            true
+                                        )
+                                        .addField(
+                                            "Просмотров",
+                                            streamerViews,
+                                            true
+                                        )
+                                        .addField(
+                                            "Фолловеров",
+                                            streamerFollowers,
+                                            true
+                                        )
+                                        .addField(
+                                            "Название",
+                                            streamingActivity.details
+                                        )
+                                        .addField(
+                                            "Twitch",
+                                            `[Ссылочка на трансляцию](${streamingActivity.url})`
+                                        )
+                                        .setColor("#6441a5")
+                                        .setTimestamp();
+                                    bot.channels.cache
+                                        .find(
+                                            ch =>
+                                                ch.id ===
+                                                config.streamersChannel
+                                        )
+                                        .send(embed);
+                                });
+                        });
                 });
         }
     }
-}); */
+});
 
 const triggerwordsJSON = require("./files/notes/triggerwords.json");
 const forbiddenWordsJSON = triggerwordsJSON.forbiddenWords;
