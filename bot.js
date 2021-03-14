@@ -87,6 +87,7 @@ bot.on("presenceUpdate", async (oldPresence, newPresence) => {
                                             streamingActivity.state,
                                             true
                                         )
+                                        .addField("\u200B", "\u200B", true)
                                         .addField(
                                             "Просмотров",
                                             streamerViews,
@@ -97,6 +98,7 @@ bot.on("presenceUpdate", async (oldPresence, newPresence) => {
                                             streamerFollowers,
                                             true
                                         )
+                                        .addField("\u200B", "\u200B", true)
                                         .addField(
                                             "Название",
                                             streamingActivity.details
@@ -106,6 +108,13 @@ bot.on("presenceUpdate", async (oldPresence, newPresence) => {
                                             `[Ссылочка на трансляцию](${streamingActivity.url})`
                                         )
                                         .setColor("#6441a5")
+                                        .setFooter(
+                                            `© ${
+                                                newPresence.guild.name
+                                            } ${new Date(
+                                                newPresence.guild.createdTimestamp
+                                            ).getFullYear()}-${new Date().getFullYear()}`
+                                        )
                                         .setTimestamp();
                                     bot.channels.cache
                                         .find(
