@@ -120,7 +120,7 @@ bot.on("presenceUpdate", async (oldPresence, newPresence) => {
                                         .find(
                                             ch =>
                                                 ch.id ===
-                                                config.streamersChannel
+                                                config.StreamersChannel
                                         )
                                         .send(embed);
                                 });
@@ -166,7 +166,7 @@ fs.readdir("./commands", (err, files) => {
 
 // Триггеры на команды
 bot.on("message", async message => {
-    let prefix = config.prefix;
+    let prefix = config.Prefix;
     let messageArray = message.content.split(" ");
     let command = messageArray[0];
     let args = messageArray.slice(1);
@@ -347,7 +347,7 @@ bot.on("ready", () => {
     console.log(`${bot.user.username} online!`);
 
     setInterval(() => {
-        const statusesNames = config.botStatuses;
+        const statusesNames = config.BotStatuses;
         const nameStatus =
             statusesNames[Math.floor(Math.random() * statusesNames.length)];
         bot.user.setPresence({

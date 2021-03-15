@@ -1,5 +1,5 @@
 {
-    "prefix": "!",
+    "Prefix": "!",
 
     "BonfireLinksGif": "https://i.imgur.com/S6UV72e.gif",
     "BonfireLinksInvite": "https://discord.gg/8AtCHXH",
@@ -9,7 +9,7 @@
     "CinemaLinksInvite": "https://discord.gg/WMafhFZ",
     "CinemaAnnounceChannel": "213736387818553344",
 
-    "commandsPermissionSlander": "815553104216457237",
+    "CommandsPermissionSlander": "815553104216457237",
 
     "UserJoinServerAnnounceChannel": "543340636494102546",
     "UserJoinServerRole": "449679001670123523",
@@ -19,19 +19,19 @@
     "UserLeaveServerImage": "https://i.imgur.com/X6iqBfb.png",
 
     "LogsModsChannel": "817749172869660732",
-    "LogsFullChannel": "817749172869660732",
+    "LogsFullChannel": "817760977780080690",
 
-    "streamersChannel": "820354973933895680",
+    "StreamersChannel": "659759726375993345",
 
     "TriggerNsfwChannel": "658785700531142664",
     "TriggerMusicChannel": "718529319072301076",
     "TriggerEatChannel": "713832315175829525",
 
-    "sinsRole": "818494138654916638",
-    "sinsImageGood": "https://i.imgur.com/0T4ha6w.png",
-    "sinsImageNotGood": "https://i.imgur.com/hfrakVF.png",
+    "SinsRole": "818494138654916638",
+    "SinsImageGood": "https://i.imgur.com/0T4ha6w.png",
+    "SinsImageNotGood": "https://i.imgur.com/hfrakVF.png",
 
-    "botStatuses": [
+    "BotStatuses": [
         "ОГУРЕЦ ВЕРНУЛСЯ!",
         "ИЗВИНИСЬ!",
         "КУ! КУКУМБА!",
