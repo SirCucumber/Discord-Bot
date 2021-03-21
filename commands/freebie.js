@@ -1,28 +1,50 @@
 const Discord = require("discord.js");
 const config = require("../config.json");
-const triggerwordsJSON = require("../files/notes/triggerwords.json");
 
 module.exports.run = async (bot, message, args) => {
-    //const freeCompanyNameJSON = triggerwordsJSON.freebie;
+    let freeCompany;
     const freeChannel = config.FreebieChannel;
-    const freeCompany = message.content.split(" ").splice(1, 1);
-    //let freeCompany = "";
     const freeLinks = message.content.split(" ").splice(1, 1);
-    const freeInfo = message.content.split(" ").splice(2).join(" ");
+    let messageContent = message.content
+        .toLowerCase()
+        .split(new RegExp("[!\"[\\]{}%^&=*$:№@~#'?;/,.<>\\|`]+|\\s+"));
+    let freeInfo = message.content.split(" ").splice(2).join(" ");
+
+    if (messageContent.indexOf("steampowered") != -1) {
+        freeCompany = "Steam";
+    } else if (messageContent.indexOf("epicgames") != -1) {
+        freeCompany = "Epic Games";
+    } else if (messageContent.indexOf("ubisoft") != -1) {
+        freeCompany = "Ubisoft";
+    } else if (messageContent.indexOf("gog") != -1) {
+        freeCompany = "GOG";
+    } else if (messageContent.indexOf("humblebundle") != -1) {
+        freeCompany = "Humble Bundle";
+    } else if (messageContent.indexOf("origin") != -1) {
+        freeCompany = "Origin";
+    } else {
+        freeCompany = "Что-то непонятное";
+    }
+
+    if (freeInfo == NaN || freeInfo == undefined || freeInfo.length == 0) {
+        freeInfo = "Сыр в мышеловке";
+    }
+
     let embed = new Discord.MessageEmbed()
         .setTitle("Халявушка", true)
-        .setTimestamp("https://i.imgur.com/wiRhYs4.png")
-        .addField("Нашел", message.author, true)
-        .addField("Магазин", freeCompany, true)
-        .addField("\u200B", "\u200B", true)
-        .addField("Доп.информация", freeInfo)
-        .addField("Ссылка", freeLinks)
+        .addField("Нашел", message.author)
+        .addField("Магазин", freeCompany)
+        .addField("Информация", freeInfo)
+        .addField("Ссылка", `[Ссылочка на раздачу](${freeLinks})`)
         .setTimestamp()
         .setColor("RANDOM");
     await message.guild.channels.cache
         .get(freeChannel)
         .send(embed)
-        .then(message.delete({ timeout: 3000 }));
+        .then(message.delete({ timeout: 3000 }))
+        .then(embedMessage => {
+            embedMessage.react("696709254274482207");
+        });
 };
 
 module.exports.help = {

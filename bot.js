@@ -8,6 +8,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const bot = new Discord.Client();
 const config = require("./config.json");
+const birthdaysJSON = require("./files/notes/birthdays.json");
 
 const { ApiClient, TeamWithUsers } = require("twitch");
 const {
@@ -164,6 +165,15 @@ fs.readdir("./commands", (err, files) => {
     });
 });
 
+// Триггеры на упоминания бота
+bot.on("message", async message => {
+    const textReply = triggerwordsJSON.botTriggerPhrase;
+    const textPhrase = textReply[Math.floor(Math.random() * textReply.length)];
+    if (message.mentions.has(bot.user.id)) {
+        message.reply(textPhrase);
+    }
+});
+
 // Триггеры на команды
 bot.on("message", async message => {
     let prefix = config.Prefix;
@@ -183,7 +193,7 @@ bot.on("message", async message => {
 bot.on("message", async message => {
     const messageContentMassive = message.content
         .toLowerCase()
-        .split(new RegExp("[!\"[\\]{}%^&=*$:№@~#'?;/,.<>\\|`]+|\\s+"));
+        .split(new RegExp("[!\"[\\]{}%^&=*$:№@~()#'?;/,.<>\\|`]+|\\s+"));
     // Запрещенные слова
     if (
         forbiddenWordsJSON.some(word => {
@@ -360,6 +370,22 @@ bot.on("ready", () => {
         });
     }, 60000);
 });
+
+// Проверка на ДР
+/* bot.on("ready", () => {
+    let channel = bot.channels.cache.find(c => c.id == "815513290917806101");
+    let todayDay = new Date().getUTCDate();
+    let todayMonth = new Date().getUTCMonth() + 1;
+    let today = `${fill(todayDay)}.${fill(todayMonth)}`;
+
+    setTimeout(() => {
+        channel.send("https://i.imgur.com/gqW3cDm.gifv");
+    }, 5000);
+});
+
+function fill(n) {
+    return ("00" + n).slice(-2);
+} */
 
 // Логи Модерские = Редактирование сообщения
 bot.on("messageUpdate", async (oldMessage, newMessage) => {
@@ -659,3 +685,74 @@ bot.on("guildMemberRemove", async member => {
         embedMessage.react("755775832261394514");
     });
 });
+
+// Доска почета
+/* bot.on("messageReactionAdd", async messageReaction => {
+    let channel = messageReaction.message.guild.channels.cache.find(
+        c => c.id == config.StarboardChannel
+    );
+    if (
+        messageReaction.emoji.id == config.StarboardEmoji ||
+        messageReaction.count == 1
+    )
+        if (
+            messageReaction.message.attachments.size > 0 &&
+            messageReaction.message.content.length == 0
+        ) {
+            let embedReact = new Discord.MessageEmbed()
+                .setThumbnail(
+                    messageReaction.message.author.displayAvatarURL({
+                        dynamic: true,
+                    })
+                )
+                .addField("Автор", messageReaction.message.author, true)
+                .addField("Канал", messageReaction.message.channel, true)
+                .addField("\u200B", "\u200B", true)
+                .addField(
+                    "Оригинал",
+                    `[Гиперпрыжок к медиа](${messageReaction.message.url})`
+                )
+                //.setFooter(`Поддержало: ${messageReaction.count}`)
+                .setTimestamp();
+            await channel.send(embedReact);
+        } else if (
+            messageReaction.message.attachments.size > 0 &&
+            messageReaction.message.content.length > 0
+        ) {
+            let embedReact = new Discord.MessageEmbed()
+                .setThumbnail(
+                    messageReaction.message.author.displayAvatarURL({
+                        dynamic: true,
+                    })
+                )
+                .addField("Автор", messageReaction.message.author, true)
+                .addField("Канал", messageReaction.message.channel, true)
+                .addField("\u200B", "\u200B", true)
+                .addField("Сообщение", messageReaction.message.content)
+                .addField(
+                    "Оригинал",
+                    `[Гиперпрыжок к сообщению](${messageReaction.message.url})`
+                )
+                //.setFooter(`Поддержало: ${messageReaction.count}`)
+                .setTimestamp();
+            await channel.send(embedReact);
+        } else {
+            let embedReact = new Discord.MessageEmbed()
+                .setThumbnail(
+                    messageReaction.message.author.displayAvatarURL({
+                        dynamic: true,
+                    })
+                )
+                .addField("Автор", messageReaction.message.author, true)
+                .addField("Канал", messageReaction.message.channel, true)
+                .addField("\u200B", "\u200B", true)
+                .addField("Сообщение", messageReaction.message.content)
+                .addField(
+                    "Оригинал",
+                    `[Гиперпрыжок к сообщению](${messageReaction.message.url})`
+                )
+                //.setFooter(`Поддержало: ${messageReaction.count}`)
+                .setTimestamp();
+            await channel.send(embedReact);
+        }
+}); */
