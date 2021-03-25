@@ -372,20 +372,47 @@ bot.on("ready", () => {
 });
 
 // Проверка на ДР
-/* bot.on("ready", () => {
-    let channel = bot.channels.cache.find(c => c.id == "815513290917806101");
-    let todayDay = new Date().getUTCDate();
-    let todayMonth = new Date().getUTCMonth() + 1;
-    let today = `${fill(todayDay)}.${fill(todayMonth)}`;
+function birthday() {
+    let interval;
+    if (new Date().getUTCHours() < 7) {
+        let triggerDate = new Date().setUTCHours(7, 0, 0, 0);
+        interval = triggerDate - Date.now();
+    } else {
+        let triggerDate = new Date(new Date().setUTCHours(31, 0, 0, 0));
+        interval = triggerDate - Date.now();
+    }
 
     setTimeout(() => {
-        channel.send("https://i.imgur.com/gqW3cDm.gifv");
-    }, 5000);
+        const birthdays = new Map(Object.entries(birthdaysJSON.birthdays));
+        const birthdayUsers = birthdays.get(
+            `${fill(new Date().getUTCDate())}.${fill(
+                new Date().getUTCMonth() + 1
+            )}`
+        );
+        console.log(birthdayUsers);
+        if (birthdayUsers) {
+            let channel = bot.channels.cache.find(
+                c => c.id == "815513290917806101"
+            );
+            let birthdayText = "Bla-bla: ";
+            birthdayUsers.forEach(userID => {
+                birthdayText += `<@${userID}> `;
+            });
+            birthdayText += "Hooray!";
+            channel.send(birthdayText);
+        }
+
+        birthday();
+    }, interval);
+}
+
+bot.on("ready", () => {
+    birthday();
 });
 
 function fill(n) {
     return ("00" + n).slice(-2);
-} */
+}
 
 // Логи Модерские = Редактирование сообщения
 bot.on("messageUpdate", async (oldMessage, newMessage) => {

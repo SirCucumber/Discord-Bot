@@ -6,6 +6,10 @@ Super Duper Bot of the [Green Kingdom](https://discord.com/invite/Z3tv7dr) :euro
 
 ## Changelog :scroll:
 
+-   **Version 0.1.2**
+
+    -   Добавлены поздравления с др
+
 -   **Version 0.1.1**
 
     -   Добавлен Starboard
