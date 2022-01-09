@@ -9,146 +9,149 @@ const fs = require("fs");
 const bot = new Discord.Client();
 const config = require("./config.json");
 const birthdaysJSON = require("./files/notes/birthdays.json");
-
-const { ApiClient, TeamWithUsers } = require("twitch");
-const {
-    AccessToken,
-    RefreshableAuthProvider,
-    StaticAuthProvider,
-} = require("twitch-auth");
-
-const clientId = process.env.clientId;
-const accessToken = process.env.accessToken;
-const clientSecret = process.env.clientSecret;
-const refreshToken = process.env.refreshToken;
-const authProvider = new RefreshableAuthProvider(
-    new StaticAuthProvider(clientId, accessToken),
-    {
-        clientSecret,
-        refreshToken,
-        onRefresh: token => {},
-    }
-);
-
-let streamerViews = 0;
-let streamerFollowers;
-let streamerNickname;
-let streamerId;
-let streamingActivity;
-
-bot.on("presenceUpdate", async (oldPresence, newPresence) => {
-    const apiClient = new ApiClient({ authProvider });
-
-    if (oldPresence === undefined || newPresence === undefined) {
-        return;
-    }
-    if (newPresence.member.roles.cache.has("531871243163533323")) {
-        streamingActivity = newPresence.activities.find(
-            a => a.type === "STREAMING"
-        );
-        if (streamingActivity == undefined) {
-            return;
-        }
-        if (
-            !oldPresence.activities.find(a => a.type === "STREAMING") &&
-            streamingActivity
-        ) {
-            streamerNickname = streamingActivity.url.split("/").splice(3, 2);
-
-            apiClient.helix.users
-                .getUserByName(streamerNickname[0])
-                .then(channel => {
-                    streamerViews = channel.views;
-                    apiClient.helix.users
-                        .getUserByName(streamerNickname[0])
-                        .then(user => {
-                            streamerId = user.id;
-                            apiClient.helix.users
-                                .getFollows({ followedUser: `${streamerId}` })
-                                .then(f => {
-                                    streamerFollowers = f.total;
-
-                                    let embed = new Discord.MessageEmbed()
-                                        .setTitle("Обнаружен стример!")
-                                        .setThumbnail(
-                                            newPresence.member.user.displayAvatarURL(
-                                                {
-                                                    dynamic: true,
-                                                    size: 512,
-                                                }
-                                            )
-                                        )
-                                        .addField(
-                                            "Стример",
-                                            newPresence.user.username,
-                                            true
-                                        )
-                                        .addField(
-                                            "Категория",
-                                            streamingActivity.state,
-                                            true
-                                        )
-                                        .addField("\u200B", "\u200B", true)
-                                        .addField(
-                                            "Просмотров",
-                                            streamerViews,
-                                            true
-                                        )
-                                        .addField(
-                                            "Фолловеров",
-                                            streamerFollowers,
-                                            true
-                                        )
-                                        .addField("\u200B", "\u200B", true)
-                                        .addField(
-                                            "Название",
-                                            streamingActivity.details
-                                        )
-                                        .addField(
-                                            "Twitch",
-                                            `[Ссылочка на трансляцию](${streamingActivity.url})`
-                                        )
-                                        .setColor("#6441a5")
-                                        .setFooter(
-                                            `© ${
-                                                newPresence.guild.name
-                                            } ${new Date(
-                                                newPresence.guild.createdTimestamp
-                                            ).getFullYear()}-${new Date().getFullYear()}`
-                                        )
-                                        .setTimestamp();
-                                    bot.channels.cache
-                                        .find(
-                                            ch =>
-                                                ch.id ===
-                                                config.StreamersChannel
-                                        )
-                                        .send(embed);
-                                });
-                        });
-                });
-        }
-    }
-});
-
+const TriggerWords = require("./modules/TriggerWords.js");
+const StreamAnnounce = require("./modules/StreamAnnounce.js");
 const triggerwordsJSON = require("./files/notes/triggerwords.json");
-const forbiddenWordsJSON = triggerwordsJSON.forbiddenWords;
-const animeWordsJSON = triggerwordsJSON.animeWords;
-const symbolWordsJSON = triggerwordsJSON.symbolWords;
-const linksWordsJSON = triggerwordsJSON.linksWords;
-const helloWordsJSON = triggerwordsJSON.helloWords;
-const fWordsJSON = triggerwordsJSON.fWords;
-const cookiesWordsJSON = triggerwordsJSON.cookiesWords;
-const freeWordsJSON = triggerwordsJSON.freeWords;
-const wutsWordsJSON = triggerwordsJSON.wutsWords;
-const screamWordsJSON = triggerwordsJSON.screamWords;
-const bonfireWordsJSON = triggerwordsJSON.bonfireWords;
-const cucumberWordsJSON = triggerwordsJSON.cucumberWords;
-const musicWordsJSON = triggerwordsJSON.musicWords;
-const morningWordsJSON = triggerwordsJSON.morningWords;
-const nightWordsJSON = triggerwordsJSON.nightWords;
-const judgeWordsJSON = triggerwordsJSON.judgeWords;
-const poopWordsJSON = triggerwordsJSON.poopWords;
+
+// const { ApiClient, TeamWithUsers } = require("twitch");
+// const {
+//     AccessToken,
+//     RefreshableAuthProvider,
+//     StaticAuthProvider,
+// } = require("twitch-auth");
+
+// const clientId = process.env.clientId;
+// const accessToken = process.env.accessToken;
+// const clientSecret = process.env.clientSecret;
+// const refreshToken = process.env.refreshToken;
+// const authProvider = new RefreshableAuthProvider(
+//     new StaticAuthProvider(clientId, accessToken),
+//     {
+//         clientSecret,
+//         refreshToken,
+//         onRefresh: token => {},
+//     }
+// );
+
+// let streamerViews = 0;
+// let streamerFollowers;
+// let streamerNickname;
+// let streamerId;
+// let streamingActivity;
+
+// bot.on("presenceUpdate", async (oldPresence, newPresence) => {
+//     const apiClient = new ApiClient({ authProvider });
+
+//     if (oldPresence === undefined || newPresence === undefined) {
+//         return;
+//     }
+//     if (newPresence.member.roles.cache.has("531871243163533323")) {
+//         streamingActivity = newPresence.activities.find(
+//             a => a.type === "STREAMING"
+//         );
+//         if (streamingActivity == undefined) {
+//             return;
+//         }
+//         if (
+//             !oldPresence.activities.find(a => a.type === "STREAMING") &&
+//             streamingActivity
+//         ) {
+//             streamerNickname = streamingActivity.url.split("/").splice(3, 2);
+
+//             apiClient.helix.users
+//                 .getUserByName(streamerNickname[0])
+//                 .then(channel => {
+//                     streamerViews = channel.views;
+//                     apiClient.helix.users
+//                         .getUserByName(streamerNickname[0])
+//                         .then(user => {
+//                             streamerId = user.id;
+//                             apiClient.helix.users
+//                                 .getFollows({ followedUser: `${streamerId}` })
+//                                 .then(f => {
+//                                     streamerFollowers = f.total;
+
+//                                     let embed = new Discord.MessageEmbed()
+//                                         .setTitle("Обнаружен стример!")
+//                                         .setThumbnail(
+//                                             newPresence.member.user.displayAvatarURL(
+//                                                 {
+//                                                     dynamic: true,
+//                                                     size: 512,
+//                                                 }
+//                                             )
+//                                         )
+//                                         .addField(
+//                                             "Стример",
+//                                             newPresence.user.username,
+//                                             true
+//                                         )
+//                                         .addField(
+//                                             "Категория",
+//                                             streamingActivity.state,
+//                                             true
+//                                         )
+//                                         .addField("\u200B", "\u200B", true)
+//                                         .addField(
+//                                             "Просмотров",
+//                                             streamerViews,
+//                                             true
+//                                         )
+//                                         .addField(
+//                                             "Фолловеров",
+//                                             streamerFollowers,
+//                                             true
+//                                         )
+//                                         .addField("\u200B", "\u200B", true)
+//                                         .addField(
+//                                             "Название",
+//                                             streamingActivity.details
+//                                         )
+//                                         .addField(
+//                                             "Twitch",
+//                                             `[Ссылочка на трансляцию](${streamingActivity.url})`
+//                                         )
+//                                         .setColor("#6441a5")
+//                                         .setFooter(
+//                                             `© ${
+//                                                 newPresence.guild.name
+//                                             } ${new Date(
+//                                                 newPresence.guild.createdTimestamp
+//                                             ).getFullYear()}-${new Date().getFullYear()}`
+//                                         )
+//                                         .setTimestamp();
+//                                     bot.channels.cache
+//                                         .find(
+//                                             ch =>
+//                                                 ch.id ===
+//                                                 config.StreamersChannel
+//                                         )
+//                                         .send(embed);
+//                                 });
+//                         });
+//                 });
+//         }
+//     }
+// });
+
+// const triggerwordsJSON = require("./files/notes/triggerwords.json");
+// const forbiddenWordsJSON = triggerwordsJSON.forbiddenWords;
+// const animeWordsJSON = triggerwordsJSON.animeWords;
+// const symbolWordsJSON = triggerwordsJSON.symbolWords;
+// const linksWordsJSON = triggerwordsJSON.linksWords;
+// const helloWordsJSON = triggerwordsJSON.helloWords;
+// const fWordsJSON = triggerwordsJSON.fWords;
+// const cookiesWordsJSON = triggerwordsJSON.cookiesWords;
+// const freeWordsJSON = triggerwordsJSON.freeWords;
+// const wutsWordsJSON = triggerwordsJSON.wutsWords;
+// const screamWordsJSON = triggerwordsJSON.screamWords;
+// const bonfireWordsJSON = triggerwordsJSON.bonfireWords;
+// const cucumberWordsJSON = triggerwordsJSON.cucumberWords;
+// const musicWordsJSON = triggerwordsJSON.musicWords;
+// const morningWordsJSON = triggerwordsJSON.morningWords;
+// const nightWordsJSON = triggerwordsJSON.nightWords;
+// const judgeWordsJSON = triggerwordsJSON.judgeWords;
+// const poopWordsJSON = triggerwordsJSON.poopWords;
 
 bot.commands = new Discord.Collection();
 
@@ -189,168 +192,17 @@ bot.on("message", async message => {
     } */
 });
 
+bot.login(process.env.BOT_TOKEN);
+
 // Триггеры на слова
 bot.on("message", async message => {
-    const messageContentMassive = message.content
-        .toLowerCase()
-        .split(new RegExp("[!\"[\\]{}%^&=*$:№@~()#'?;/,.<>\\|`]+|\\s+"));
-    // Запрещенные слова
-    if (
-        forbiddenWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.channel.send("У нас в королевстве так не выражаются!");
-    }
-    // Аниме
-    if (
-        animeWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("🚽");
-    }
-    // Символы
-    if (
-        symbolWordsJSON.some(word => {
-            return message.content.toLowerCase().includes(word);
-        })
-    ) {
-        message.channel.send("┬─┬ ノ( ゜-゜ノ)");
-    }
-    // Ссылки
-    if (
-        linksWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.reply(
-            `༼ つ ◕_◕ ༽つ держи ||https://www.youtube.com/watch?v=dQw4w9WgXcQ||`
-        );
-    }
-    // Приветствие
-    if (
-        helloWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("755772772298260550");
-    }
-    // Press F
-    if (
-        fWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("🇫");
-    }
-    // Печеньки
-    if (
-        cookiesWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.channel.send("https://youtu.be/xzRGxegXzYM");
-    }
-    // Халявушка
-    if (
-        freeWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("696709254274482207");
-    }
-    // Вуц
-    if (
-        wutsWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("695916372416528394");
-    }
-    // Кричалки
-    if (
-        screamWordsJSON.find(word => {
-            return message.content.toLowerCase().includes(word);
-        })
-    ) {
-        message.react("695916370776424479");
-    }
-    // Костер
-    if (
-        bonfireWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("696709254404636783");
-    }
-    // Кукубер
-    if (
-        cucumberWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("696709252277862513");
-    }
-    // Утро
-    if (
-        morningWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("700321938618318948");
-    }
-    // Ночь
-    if (
-        nightWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("695037044421820436");
-    }
-    // Осуждалка
-    if (
-        judgeWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.react("695037044141064202");
-    }
-    // Печеньки
-    if (
-        poopWordsJSON.some(word => {
-            return messageContentMassive.includes(word);
-        })
-    ) {
-        message.channel.send("https://i.imgur.com/gqW3cDm.gifv");
-    }
-    // NSFW
-    if (
-        (message.attachments.size > 0 || message.embeds.length > 0) &&
-        message.channel == config.TriggerNsfwChannel
-    ) {
-        message.react("695916373104263258");
-        message.react("696709252907270194");
-    }
-    // Музыка
-    if (
-        musicWordsJSON.find(word => {
-            return message.content.toLowerCase().includes(word);
-        }) &&
-        message.channel == config.TriggerMusicChannel
-    ) {
-        message.react("695037044568752204");
-    }
-    // Харчевня
-    if (
-        (message.attachments.size > 0 || message.embeds.length > 0) &&
-        message.channel == config.TriggerEatChannel
-    ) {
-        message.react("695544244068155402");
-    }
+    new TriggerWords().checkTriggerWords(bot, message);
 });
 
-bot.login(process.env.BOT_TOKEN);
+// Аннонсер стримов
+bot.on("presenceUpdate", async (oldPresence, newPresence) => {
+    new StreamAnnounce().checkStream(oldPresence, newPresence);
+});
 
 // Статус бота
 bot.on("ready", () => {
@@ -372,47 +224,47 @@ bot.on("ready", () => {
 });
 
 // Проверка на ДР
-function birthday() {
-    let interval;
-    if (new Date().getUTCHours() < 7) {
-        let triggerDate = new Date().setUTCHours(7, 0, 0, 0);
-        interval = triggerDate - Date.now();
-    } else {
-        let triggerDate = new Date(new Date().setUTCHours(31, 0, 0, 0));
-        interval = triggerDate - Date.now();
-    }
+// function birthday() {
+//     let interval;
+//     if (new Date().getUTCHours() < 7) {
+//         let triggerDate = new Date().setUTCHours(7, 0, 0, 0);
+//         interval = triggerDate - Date.now();
+//     } else {
+//         let triggerDate = new Date(new Date().setUTCHours(31, 0, 0, 0));
+//         interval = triggerDate - Date.now();
+//     }
 
-    setTimeout(() => {
-        const birthdays = new Map(Object.entries(birthdaysJSON.birthdays));
-        const birthdayUsers = birthdays.get(
-            `${fill(new Date().getUTCDate())}.${fill(
-                new Date().getUTCMonth() + 1
-            )}`
-        );
-        console.log(birthdayUsers);
-        if (birthdayUsers) {
-            let channel = bot.channels.cache.find(
-                c => c.id == "815513290917806101"
-            );
-            let birthdayText = "Bla-bla: ";
-            birthdayUsers.forEach(userID => {
-                birthdayText += `<@${userID}> `;
-            });
-            birthdayText += "Hooray!";
-            channel.send(birthdayText);
-        }
+//     setTimeout(() => {
+//         const birthdays = new Map(Object.entries(birthdaysJSON.birthdays));
+//         const birthdayUsers = birthdays.get(
+//             `${fill(new Date().getUTCDate())}.${fill(
+//                 new Date().getUTCMonth() + 1
+//             )}`
+//         );
+//         console.log(birthdayUsers);
+//         if (birthdayUsers) {
+//             let channel = bot.channels.cache.find(
+//                 c => c.id == "815513290917806101"
+//             );
+//             let birthdayText = "Bla-bla: ";
+//             birthdayUsers.forEach(userID => {
+//                 birthdayText += `<@${userID}> `;
+//             });
+//             birthdayText += "Hooray!";
+//             channel.send(birthdayText);
+//         }
 
-        birthday();
-    }, interval);
-}
+//         birthday();
+//     }, interval);
+// }
 
-bot.on("ready", () => {
-    birthday();
-});
+// bot.on("ready", () => {
+//     birthday();
+// });
 
-function fill(n) {
-    return ("00" + n).slice(-2);
-}
+// function fill(n) {
+//     return ("00" + n).slice(-2);
+// }
 
 // Логи Модерские = Редактирование сообщения
 bot.on("messageUpdate", async (oldMessage, newMessage) => {
