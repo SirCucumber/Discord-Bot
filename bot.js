@@ -9,8 +9,8 @@ const fs = require("fs");
 const bot = new Discord.Client();
 const config = require("./config.json");
 const birthdaysJSON = require("./files/notes/birthdays.json");
-const TriggerWords = require("./modules/TriggerWords.js");
-const StreamAnnounce = require("./modules/StreamAnnounce.js");
+const TriggerWords = require("./features/TriggerWords.js");
+const StreamAnnounce = require("./features/StreamAnnounce.js");
 const triggerwordsJSON = require("./files/notes/triggerwords.json");
 
 // const { ApiClient, TeamWithUsers } = require("twitch");
