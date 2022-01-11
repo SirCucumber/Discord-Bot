@@ -1,6 +1,6 @@
 {
     "name": "discord-bot",
-    "version": "0.0.7",
+    "version": "1.1.0",
     "description": "Super Duper Bot of the Green Kingdom",
     "main": "bot.js",
     "scripts": {
