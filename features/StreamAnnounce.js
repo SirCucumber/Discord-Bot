@@ -69,7 +69,10 @@ class StreamAnnounce {
                                         streamerFollowers = f.total;
 
                                         let embed = new Discord.MessageEmbed()
-                                            .setTitle("Обнаружен стример!")
+                                            .setTitle(
+                                                "Обнаружен стример! " +
+                                                    newPresence.user.username
+                                            )
                                             .setThumbnail(
                                                 newPresence.member.user.displayAvatarURL(
                                                     {
