@@ -3,36 +3,36 @@
 
     "BonfireLinksGif": "https://i.imgur.com/S6UV72e.gif",
     "BonfireLinksInvite": "https://discord.gg/8AtCHXH",
-    "BonfireAnnounceChannel": "213736387818553344",
+    "BonfireAnnounceChannel": "814210886851100765",
 
     "CinemaLinksGif": "https://i.imgur.com/0EkbKCZ.gif",
     "CinemaLinksInvite": "https://discord.gg/WMafhFZ",
-    "CinemaAnnounceChannel": "213736387818553344",
+    "CinemaAnnounceChannel": "814210886851100765",
 
     "FreebieChannel": "821824799608668242",
 
     "CommandsPermissionSlander": "815553104216457237",
 
-    "UserJoinServerAnnounceChannel": "543340636494102546",
+    "UserJoinServerAnnounceChannel": "816386424965955604",
     "UserJoinServerRole": "449679001670123523",
     "UserJoinServerImage": "https://i.imgur.com/K0ItPyv.png",
 
-    "UserLeaveServerAnnounceChannel": "543340636494102546",
+    "UserLeaveServerAnnounceChannel": "816386424965955604",
     "UserLeaveServerImage": "https://i.imgur.com/X6iqBfb.png",
 
-    "LogsModsChannel": "817749172869660732",
-    "LogsFullChannel": "817760977780080690",
+    "LogsModsChannel": "817730557718560790",
+    "LogsFullChannel": "817749172869660732",
 
-    "StreamersChannel": "659759726375993345",
+    "StreamersChannel": "819655798111076353",
 
     "StarboardChannel": "822883643155415050",
     "StarboardEmoji": "695343637206270043",
 
-    "TriggerNsfwChannel": "658785700531142664",
-    "TriggerMusicChannel": "718529319072301076",
-    "TriggerEatChannel": "713832315175829525",
+    "TriggerNsfwChannel": "817704675923066932",
+    "TriggerMusicChannel": "817696600964988968",
+    "TriggerEatChannel": "818475791318777856",
 
-    "SinsRole": "818494138654916638",
+    "SinsRole": "561952344422613012",
     "SinsImageGood": "https://i.imgur.com/0T4ha6w.png",
     "SinsImageNotGood": "https://i.imgur.com/hfrakVF.png",
 
@@ -41,23 +41,10 @@
         "ИЗВИНИСЬ!",
         "КУ! КУКУМБА!",
         "Продам гараж",
-        "Ауф",
-        "Чык Чырык",
-        "Шевелись, Плотва!",
-        "Я устал, я ухожу",
-        "Бонжур, епта",
-        "Ты потрясающий!",
-        "Pizza Time!",
-        "Спулае мулае",
-        "Есть пробитие",
         ":3",
+        "ERROR 418",
         "Сосатб",
-        "Вы в танцах",
         "Кусь",
-        "Потрачено",
-        "Хорошечно",
-        "Узбагойся",
-        "Дратути",
-        "Ничоси"
+        "Дратути"
     ]
 }
