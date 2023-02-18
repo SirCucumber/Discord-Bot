@@ -11,7 +11,7 @@ const StreamAnnounce = require("./features/StreamAnnounce.js");
 const Logs = require("./features/Logs.js");
 const triggerwordsJSON = require("./files/notes/triggerwords.json");
 
-bot.login(process.env.BOT_TOKEN);
+bot.login(process.env.BOT_TOKEN_TEST);
 bot.commands = new Discord.Collection();
 
 fs.readdir("./commands", (err, files) => {
