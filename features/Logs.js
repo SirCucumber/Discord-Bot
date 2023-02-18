@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const config = require("../config.json");
 const bot = new Discord.Client();
 
-bot.login(process.env.BOT_TOKEN_TEST);
+bot.login(process.env.BOT_TOKEN_MASTER);
 require("dotenv").config();
 
 class Logs {
