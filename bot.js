@@ -28,13 +28,14 @@ fs.readdir("./commands", (err, files) => {
 });
 
 // Триггеры на упоминания бота
-bot.on("message", async message => {
+//Пока выглядит как излишний флуд, т.к. бот приггериться и на @here/@everyone
+/* bot.on("message", async message => {
     const textReply = triggerwordsJSON.botTriggerPhrase;
     const textPhrase = textReply[Math.floor(Math.random() * textReply.length)];
     if (message.mentions.has(bot.user.id)) {
         message.reply(textPhrase);
     }
-});
+}); */
 
 // Триггеры на команды
 bot.on("message", async message => {
